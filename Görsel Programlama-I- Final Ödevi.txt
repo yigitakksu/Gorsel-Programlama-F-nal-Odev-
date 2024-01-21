@@ -1,0 +1,126 @@
+using System;
+using System.Collections.Generic;
+
+class Flight
+{
+    public string Time { get; set; }
+    public int AvailableSeats { get; set; }
+}
+
+class Reservation
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public int Age { get; set; }
+    public int SeatNumber { get; set; }
+}
+
+class AirplaneTicketReservationSystem
+{
+    private List<Flight> flights = new List<Flight>();
+    private List<Reservation> reservations = new List<Reservation>();
+
+    public void Start()
+    {
+        Flight flight1 = new Flight { Time = "14:00", AvailableSeats = 10 };
+        Flight flight2 = new Flight { Time = "16:30", AvailableSeats = 15 };
+
+        flights.Add(flight1);
+        flights.Add(flight2);
+
+        Console.WriteLine("Airplane Ticket Reservation System");
+
+        while (true)
+        {
+            Console.WriteLine("\nMenu:");
+            Console.WriteLine("1. List Flights");
+            Console.WriteLine("2. Make a Reservation");
+            Console.WriteLine("3. Exit");
+
+            Console.Write("Your choice: ");
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    ListFlights();
+                    break;
+                case "2":
+                    MakeReservation();
+                    break;
+                case "3":
+                    Environment.Exit(0);
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+    }
+
+    private void ListFlights()
+    {
+        Console.WriteLine("\nFlights:");
+        foreach (var flight in flights)
+        {
+            Console.WriteLine($"- Time: {flight.Time}, Available Seats: {flight.AvailableSeats}");
+        }
+    }
+
+    private void MakeReservation()
+    {
+        ListFlights();
+        Console.Write("Enter the time of the flight you want to make a reservation for: ");
+        string enteredTime = Console.ReadLine();
+
+        Flight selectedFlight = flights.Find(flight => flight.Time == enteredTime);
+
+        if (selectedFlight != null && selectedFlight.AvailableSeats > 0)
+        {
+            Console.WriteLine($"Selected Flight: Time: {selectedFlight.Time}, Available Seats: {selectedFlight.AvailableSeats}");
+
+            Console.Write("Enter your First Name: ");
+            string firstName = Console.ReadLine();
+
+            Console.Write("Enter your Last Name: ");
+            string lastName = Console.ReadLine();
+
+            Console.Write("Enter your Age: ");
+            int age;
+            while (!int.TryParse(Console.ReadLine(), out age) || age <= 0)
+            {
+                Console.Write("Enter a valid age: ");
+            }
+
+            Reservation reservation = new Reservation
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Age = age,
+                SeatNumber = selectedFlight.AvailableSeats
+            };
+
+            selectedFlight.AvailableSeats--;
+            reservations.Add(reservation);
+
+            Console.WriteLine($"Reservation successfully made. Seat Number: {reservation.SeatNumber}");
+        }
+        else if (selectedFlight != null && selectedFlight.AvailableSeats == 0)
+        {
+            Console.WriteLine("Sorry, all seats for the selected flight are taken.");
+        }
+        else
+        {
+            Console.WriteLine("Invalid time or flight. Please try again.");
+        }
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        AirplaneTicketReservationSystem system = new AirplaneTicketReservationSystem();
+        system.Start();
+    }
+}
